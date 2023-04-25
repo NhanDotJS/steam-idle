@@ -9,34 +9,34 @@ const path = "./refreshToken.txt";
 
 const client = new SteamUser();
 
-// if (fs.existsSync(path)) {
-//   fs.readFile(path, "utf8", (err, data) => {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-//     try {
-//       var decoded = jwt_decode(data);
-//       const exp = decoded.exp;
-//     } catch (error) {
-//       console.log("Invalid token");
-//       main();
-//     }
+if (fs.existsSync(path)) {
+  fs.readFile(path, "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    try {
+      var decoded = jwt_decode(data);
+      const exp = decoded.exp;
+    } catch (error) {
+      console.log("Invalid token");
+      main();
+    }
 
-//     if (Date.now() >= exp * 1000) {
-//       console.log("Token expired! Please log in again.");
-//       main();
-//     } else {
-//       console.log("Token not expired");
-//       console.log("Attempting to log in...");
-//       logIn(data);
-//     }
-//   });
-// } else {
-//   main();
-// }
+    if (Date.now() >= exp * 1000) {
+      console.log("Token expired! Please log in again.");
+      main();
+    } else {
+      console.log("Token not expired");
+      console.log("Attempting to log in...");
+      logIn(data);
+    }
+  });
+} else {
+  main();
+}
 
-main();
+// main();
 
 // We need to wrap everything in an async function since node <14.8 cannot use await in the top-level context
 async function main() {
