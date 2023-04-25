@@ -1,5 +1,6 @@
 const fs = require("fs");
 const jwt_decode = require("jwt-decode");
+const QRCode = require("qrcode");
 
 const SteamUser = require("steam-user");
 const { EAuthTokenPlatformType, LoginSession } = require("steam-session");
@@ -8,34 +9,34 @@ const path = "./refreshToken.txt";
 
 const client = new SteamUser();
 
-if (fs.existsSync(path)) {
-  fs.readFile(path, "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    try {
-      var decoded = jwt_decode(data);
-      const exp = decoded.exp;
-    } catch (error) {
-      console.log("Invalid token");
-      main();
-    }
+// if (fs.existsSync(path)) {
+//   fs.readFile(path, "utf8", (err, data) => {
+//     if (err) {
+//       console.error(err);
+//       return;
+//     }
+//     try {
+//       var decoded = jwt_decode(data);
+//       const exp = decoded.exp;
+//     } catch (error) {
+//       console.log("Invalid token");
+//       main();
+//     }
 
-    if (Date.now() >= exp * 1000) {
-      console.log("Token expired! Please log in again.");
-      main();
-    } else {
-      console.log("Token not expired");
-      console.log("Attempting to log in...");
-      logIn(data);
-    }
-  });
-} else {
-  main();
-}
+//     if (Date.now() >= exp * 1000) {
+//       console.log("Token expired! Please log in again.");
+//       main();
+//     } else {
+//       console.log("Token not expired");
+//       console.log("Attempting to log in...");
+//       logIn(data);
+//     }
+//   });
+// } else {
+//   main();
+// }
 
-// main();
+main();
 
 // We need to wrap everything in an async function since node <14.8 cannot use await in the top-level context
 async function main() {
@@ -43,6 +44,13 @@ async function main() {
   let session = new LoginSession(EAuthTokenPlatformType.SteamClient);
   session.loginTimeout = 120000; // timeout after 2 minutes
   let startResult = await session.startWithQR();
+  QRCode.toString(
+    startResult.qrChallengeUrl,
+    { type: "terminal" },
+    function (err, url) {
+      console.log(url);
+    }
+  );
 
   let qrUrl =
     "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
