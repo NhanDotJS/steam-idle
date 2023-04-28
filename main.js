@@ -18,18 +18,17 @@ if (fs.existsSync(path)) {
     try {
       var decoded = jwt_decode(data);
       const exp = decoded.exp;
+      if (Date.now() >= exp * 1000) {
+        console.log("Token expired! Please log in again.");
+        main();
+      } else {
+        console.log("Token not expired");
+        console.log("Attempting to log in...");
+        logIn(data);
+      }
     } catch (error) {
       console.log("Invalid token");
       main();
-    }
-
-    if (Date.now() >= exp * 1000) {
-      console.log("Token expired! Please log in again.");
-      main();
-    } else {
-      console.log("Token not expired");
-      console.log("Attempting to log in...");
-      logIn(data);
     }
   });
 } else {
@@ -106,6 +105,6 @@ function logIn(refreshToken) {
   client.on("loggedOn", () => {
     console.log("Logged into Steam");
     client.setPersona(SteamUser.EPersonaState.Online);
-    client.gamesPlayed(["Ong Liem", 1070330, 1293830]);
+    client.gamesPlayed(["Yeu Ban Nga", 1070330, 261570, 1293830, 730]);
   });
 }
